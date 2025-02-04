@@ -69,10 +69,12 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
 
         progressOrb = orbs.ProgressOrb(current_status)
 
+        statusOrb = orbs.StatusOrb(selected_file)
+
 
         resp = InfoOrbsResponse()
 
-        resp.displays = [tempOrb, progressOrb, orbs.Orb(), orbs.Orb(), orbs.Orb()]
+        resp.displays = [tempOrb, progressOrb, statusOrb, orbs.Orb(), orbs.Orb()]
 
         d = resp.build_json()
         return flask.jsonify(d)

@@ -47,6 +47,28 @@ class TempOrb(Orb):
             "data": rows
         }
 
+class StatusOrb(Orb):
+    
+    def __init__(self, filename: str):
+        self.filename = filename
+
+    def render(self):
+        return {
+            "fullDraw": True,
+            "data": [
+                {
+                    "type": "text",
+                    "background": "black",
+                    "text": self.filename,
+                    "color": "white",
+                    "align": "center",
+                    "font": 1,
+                    "size": 2,
+                    "x": 110,
+                    "y": 100,
+                }
+            ]
+        }
 
 class ProgressOrb(Orb):
 
