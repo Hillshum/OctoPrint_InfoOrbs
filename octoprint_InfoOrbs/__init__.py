@@ -2,14 +2,14 @@
 from __future__ import absolute_import
 
 from dataclasses import dataclass
-import json
+import octoprint.settings
 
 import flask
 
 
 import octoprint.plugin
 
-import orbs
+from . import orbs
 
 @dataclass
 class Display:
@@ -22,12 +22,9 @@ class Display:
 
 class InfoOrbsResponse:
 
-    def __init__(self, interval=20000, displays=[]):
-        self.interval = 20000
+    def __init__(self, interval=5000, displays=[]):
+        self.interval = interval
         self.displays = displays
-
-
-
 
 
     def build_json(self):
@@ -65,15 +62,17 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
         selected_file = self._printer.get_current_job()["file"]["name"]
 
         temp = self._printer.get_current_temperatures()
-        temp = temp["tool0"]["actual"]
 
         tempOrb = orbs.TempOrb(temp)
 
-        progressOrb = orbs.ProgressOrb()
+        current_status = self._printer.get_current_data()
+
+        progressOrb = orbs.ProgressOrb(current_status)
+
 
         resp = InfoOrbsResponse()
 
-        resp.displays = [tempOrb, progressOrb]
+        resp.displays = [tempOrb, progressOrb, orbs.Orb(), orbs.Orb(), orbs.Orb()]
 
         d = resp.build_json()
         return flask.jsonify(d)
