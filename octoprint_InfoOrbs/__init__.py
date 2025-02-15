@@ -42,7 +42,7 @@ class InfoOrbsResponse:
 class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
     octoprint.plugin.AssetPlugin,
     octoprint.plugin.BlueprintPlugin,
-    # octoprint.plugin.SimpleApiPlugin,
+    octoprint.plugin.TemplatePlugin,
 ):
 
 
@@ -50,7 +50,7 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
 
     def get_settings_defaults(self):
         return {
-            # put your plugin's default settings here
+            "url_base": "http://octopi.local",
         }
 
     ##~~ AssetPlugin mixin
@@ -109,8 +109,8 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
 
         statusOrb = orbs.StatusOrb(selected_file)
 
-        snapshotUrl = octoprint.settings.settings().get(["webcam", "snapshot"])
-        snapshotOrb = orbs.ImageOrb("http://192.168.222.34:8080/plugin/InfoOrbs/snapshot")
+        snapshotUrl = flask.url_for("plugin.InfoOrbs.prepare_image")
+        snapshotOrb = orbs.ImageOrb(self._settings.get(["url_base"]) + snapshotUrl)
 
 
         resp = InfoOrbsResponse()
@@ -122,6 +122,11 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
 
     def is_blueprint_protected(self):
         return False
+
+    def get_template_configs(self):
+        return [
+            dict(type="settings", custom_bindings=False),
+        ]
 
     ##~~ Softwareupdate hook
 
