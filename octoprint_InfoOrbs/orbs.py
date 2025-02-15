@@ -47,6 +47,26 @@ class TempOrb(Orb):
             "data": rows
         }
 
+class ImageOrb(Orb):
+    
+    def __init__(self, url: str):
+        self.url = url
+
+    def render(self):
+        return {
+            "fullDraw": True,
+            "data": [
+                {
+                    "type": "image",
+                    "x": 0,
+                    "y": 0,
+                    "width": 240,
+                    "height": 240,
+                    "imageUrl": self.url,
+                }
+            ]
+        }
+
 class StatusOrb(Orb):
     
     def __init__(self, filename: str):
