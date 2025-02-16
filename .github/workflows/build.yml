@@ -52,4 +52,4 @@ jobs:
           python -m pip install octoprint
       - name: 🧪 Test install of package
         run: |
-          python -m pip install dist/OctoPrint-CostEstimation-*.zip
+          python -m pip install dist/OctoPrint-InfoOrbs-*.zip
