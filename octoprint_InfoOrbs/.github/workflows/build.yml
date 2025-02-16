@@ -1,0 +1,55 @@
+###
+### Simple script to build a zip file of the whole repository
+###
+
+name: Build Plugin Action
+on: [push]
+jobs:
+  build:
+    name: 🏗 Build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏗 Install build dependencies
+        run: python -m pip install wheel octoprint --user
+
+      - name: "Build ZIP"
+        run: python setup.py sdist --formats=zip
+      
+      - name: "Set ZIP_FILE"
+        run: echo "ZIP_FILE=$(ls dist/*.zip)" >> $GITHUB_ENV
+
+      - name: ⬆ Upload build result
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build"
+          path: ${{ env.ZIP_FILE }}
+
+  test-install:
+    name: 🧪 Installation tests
+    needs: build
+    strategy:
+      matrix:
+        python: ["3.9", "3.11"]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: 🏗 Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: ⬇ Download build result
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
+      - name: 🏗 Install dependencies
+        run: |
+          python -m pip install --upgrade wheel setuptools pip
+          python -m pip install octoprint
+      - name: 🧪 Test install of package
+        run: |
+          python -m pip install dist/OctoPrint-CostEstimation-*.zip
