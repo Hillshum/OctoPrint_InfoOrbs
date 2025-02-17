@@ -26,8 +26,8 @@ class TempOrb(Orb):
 
         row = {
             "type": "text",
-            "font": 1,
-            "size": 2,
+            "font": 4,
+            "size": 20,
             "align": "center",
             "color": "white",
             "background": "black",
@@ -82,8 +82,8 @@ class StatusOrb(Orb):
                     "text": self.filename,
                     "color": "white",
                     "align": "center",
-                    "font": 1,
-                    "size": 2,
+                    "font": 6,
+                    "size": 10,
                     "x": 110,
                     "y": 100,
                 }
@@ -100,14 +100,12 @@ class ProgressOrb(Orb):
         elapsed = self.status["progress"]["printTime"]
         progress = self.status["progress"]["completion"]
 
+        remaining_str = "--:--"
+        elapsed_str = "--:--"
         if remaining: 
-            remaining_str = f"Remaining: {remaining // 3600}:{remaining // 60 % 60:02}"
-        else:
-            remaining_str = "Remaining: Calculating..."
+            remaining_str = f"{remaining // 3600:02}:{remaining // 60 % 60:02}"
         if elapsed:
-            elapsed_str = f"Elapsed: {elapsed // 3600}:{elapsed // 60 % 60:02}"
-        else:
-            elapsed_str = "Time Elapsed: Calculating..."
+            elapsed_str = f"{elapsed // 3600:02}:{elapsed // 60 % 60:02}"
 
         progress_arc = None
         if progress:
@@ -132,22 +130,44 @@ class ProgressOrb(Orb):
                     "background": "black",
                     "text": elapsed_str,
                     "color": "white",
-                    "align": "center",
+                    "alignment": "cc",
                     "font": 1,
-                    "size": 2,
-                    "x": 110,
-                    "y": 100,
+                    "size": 60,
+                    "x": 120,
+                    "y": 90,
+                },
+                {
+                    "type": "text",
+                    "background": "black",
+                    "text": "Elapsed",
+                    "font": 1,
+                    "size": 20,
+                    "color": "white",
+                    "alignment": "cc",
+                    "x": 120,
+                    "y": 50,
+                },
+                {
+                    "type": "text",
+                    "background": "black",
+                    "text": "Remaining",
+                    "font": 1,
+                    "size": 20,
+                    "color": "white",
+                    "alignment": "cc",
+                    "x": 120,
+                    "y": 190,
                 },
                 {
                     "type": "text",
                     "background": "black",
                     "text": remaining_str,
                     "color": "white",
-                    "align": "center",
+                    "alignment": "cc",
                     "font": 1,
-                    "size": 2,
-                    "x": 110,
-                    "y": 120,
+                    "size": 60,
+                    "x": 120,
+                    "y": 150,
                 },
             ]
         }
