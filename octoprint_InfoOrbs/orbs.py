@@ -107,24 +107,39 @@ class ProgressOrb(Orb):
         if elapsed:
             elapsed_str = f"{elapsed // 3600:02}:{elapsed // 60 % 60:02}"
 
-        progress_arc = None
+        progress_arcs = []
         if progress:
-            progress_arc = {
+            angle_end = int(progress / 100 * 360 + 180)
+            arc = {
                 "type": "arc",
                 "x": 120,
                 "y": 120,
                 "radius": 120,
                 "innerRadius": 100,
                 "angleStart": 180,
-                "angleEnd": int(progress / 100 * 360 + 180),
+                "angleEnd": angle_end,
                 "color": "green",
             }
+            progress_arcs.append(arc)
+
+            if angle_end > 360:
+                arc = {
+                    "type": "arc",
+                    "x": 120,
+                    "y": 120,
+                    "radius": 120,
+                    "innerRadius": 100,
+                    "angleStart": 0,
+                    "angleEnd": angle_end - 360,
+                    "color": "green",
+                }
+                progress_arcs.append(arc)
 
         
         return {
             "fullDraw": True,
             "data": [
-                progress_arc,
+                *progress_arcs,
                 {
                     "type": "text",
                     "background": "black",
