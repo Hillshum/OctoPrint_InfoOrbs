@@ -102,9 +102,9 @@ class ProgressOrb(Orb):
 
         remaining_str = "--:--"
         elapsed_str = "--:--"
-        if remaining: 
+        if remaining is not None: 
             remaining_str = f"{remaining // 3600:02}:{remaining // 60 % 60:02}"
-        if elapsed:
+        if elapsed is not None:
             elapsed_str = f"{elapsed // 3600:02}:{elapsed // 60 % 60:02}"
 
         progress_arcs = []
