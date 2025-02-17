@@ -26,8 +26,8 @@ class TempOrb(Orb):
 
         row = {
             "type": "text",
-            "font": 4,
-            "size": 20,
+            "font": 1,
+            "size": 30,
             "align": "center",
             "color": "white",
             "background": "black",
@@ -38,7 +38,7 @@ class TempOrb(Orb):
         rows = []
         for temp in temps:
             row["text"] = temp
-            row["y"] += 20
+            row["y"] += 30
             rows.append(row.copy())
 
 

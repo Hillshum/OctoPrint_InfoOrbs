@@ -116,7 +116,7 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
 
         resp = InfoOrbsResponse()
 
-        resp.displays = [tempOrb, progressOrb, statusOrb, snapshotOrb, orbs.Orb()]
+        resp.displays = [tempOrb, progressOrb, snapshotOrb, statusOrb, orbs.Orb()]
 
         d = resp.build_json()
         return flask.jsonify(d)
