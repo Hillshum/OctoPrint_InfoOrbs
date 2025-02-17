@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 
 from dataclasses import dataclass
+from typing import Union
 import octoprint.settings
 
 import flask
@@ -20,7 +21,7 @@ from . import orbs
 @dataclass
 class Display:
     label: str
-    data: str|int|float
+    data: Union[str,int,float]
     labelColor: str
     color: str
     background: str
