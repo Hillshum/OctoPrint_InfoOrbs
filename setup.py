@@ -78,6 +78,15 @@ except:
 
     sys.exit(-1)
 
+def get_version_and_cmdclass(pkg_path):
+    import os
+    from importlib.util import module_from_spec, spec_from_file_location
+    spec = spec_from_file_location("version", os.path.join(pkg_path, "_version.py"))
+    module = module_from_spec(spec)
+    spec.loader.exec_module(module)
+    data = module.get_data()
+    return data["version"], module.get_cmdclass(pkg_path)
+
 setup_parameters = octoprint_setuptools.create_plugin_setup_parameters(
     identifier=plugin_identifier,
     package=plugin_package,
@@ -98,5 +107,9 @@ if len(additional_setup_parameters):
     from octoprint.util import dict_merge
 
     setup_parameters = dict_merge(setup_parameters, additional_setup_parameters)
+
+version, cmdclass = get_version_and_cmdclass(plugin_package)
+setup_parameters["cmdclass"] = cmdclass
+setup_parameters["version"] = version
 
 setup(**setup_parameters)
