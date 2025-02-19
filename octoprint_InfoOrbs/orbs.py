@@ -99,6 +99,7 @@ class ProgressOrb(Orb):
         remaining = self.status["progress"]["printTimeLeft"]
         elapsed = self.status["progress"]["printTime"]
         progress = self.status["progress"]["completion"]
+        origin = self.status["progress"]["printTimeOrigin"]
 
         remaining_str = "--:--"
         elapsed_str = "--:--"
@@ -106,6 +107,9 @@ class ProgressOrb(Orb):
             remaining_str = f"{remaining // 3600:02}:{remaining // 60 % 60:02}"
         if elapsed is not None:
             elapsed_str = f"{elapsed // 3600:02}:{elapsed // 60 % 60:02}"
+
+        if origin == "genius":
+            progress = remaining / (remaining + elapsed) * 100
 
         progress_arcs = []
         if progress:
