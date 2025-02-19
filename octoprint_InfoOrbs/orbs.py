@@ -99,7 +99,7 @@ class ProgressOrb(Orb):
         remaining = self.status["progress"]["printTimeLeft"]
         elapsed = self.status["progress"]["printTime"]
         progress = self.status["progress"]["completion"]
-        origin = self.status["progress"]["printTimeOrigin"]
+        origin = self.status["progress"]["printTimeLeftOrigin"]
 
         remaining_str = "--:--"
         elapsed_str = "--:--"
