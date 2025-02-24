@@ -1,4 +1,3 @@
-
 class Orb:
 
     def render(self):
@@ -109,7 +108,7 @@ class ProgressOrb(Orb):
             elapsed_str = f"{elapsed // 3600:02}:{elapsed // 60 % 60:02}"
 
         if origin == "genius":
-            progress = remaining / (remaining + elapsed) * 100
+            progress = elapsed / (remaining + elapsed) * 100
 
         progress_arcs = []
         if progress:
@@ -139,7 +138,6 @@ class ProgressOrb(Orb):
                 }
                 progress_arcs.append(arc)
 
-        
         return {
             "fullDraw": True,
             "data": [
@@ -190,4 +188,3 @@ class ProgressOrb(Orb):
                 },
             ]
         }
-
