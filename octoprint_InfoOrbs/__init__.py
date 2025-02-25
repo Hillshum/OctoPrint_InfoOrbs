@@ -46,7 +46,6 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
     octoprint.plugin.TemplatePlugin,
 ):
 
-
     ##~~ SettingsPlugin mixin
 
     def get_settings_defaults(self):
@@ -90,7 +89,7 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
 
         # scale image to 240x240
         img = cv2.resize(img, (240, 240), interpolation=cv2.INTER_AREA)
-        
+
         # return jpg image
         jpg = cv2.imencode('.jpg', img)[1].tobytes()
         return flask.Response(jpg, mimetype='image/jpeg')
@@ -102,21 +101,26 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
 
         temp = self._printer.get_current_temperatures()
 
-        tempOrb = orbs.TempOrb(temp)
+        tempOrb = orbs.TempOrb(temp, self._logger)
 
         current_status = self._printer.get_current_data()
 
-        progressOrb = orbs.ProgressOrb(current_status)
+        progressOrb = orbs.ProgressOrb(current_status, self._logger)
 
-        statusOrb = orbs.StatusOrb(selected_file)
+        statusOrb = orbs.StatusOrb(selected_file, self._logger)
 
         snapshotUrl = flask.url_for("plugin.InfoOrbs.prepare_image")
         snapshotOrb = orbs.ImageOrb(self._settings.get(["url_base"]) + snapshotUrl)
 
-
         resp = InfoOrbsResponse()
 
-        resp.displays = [tempOrb, progressOrb, snapshotOrb, statusOrb, orbs.Orb()]
+        resp.displays = [
+            tempOrb,
+            progressOrb,
+            snapshotOrb,
+            statusOrb,
+            orbs.Orb(self._logger),
+        ]
 
         d = resp.build_json()
         return flask.jsonify(d)

@@ -1,4 +1,15 @@
+import logging
+
 class Orb:
+
+    logger = None
+
+    def __init__(self, logger=None):
+        self.logger = logger
+
+    def log(self, level, message, *args, **kwargs):
+        if self.logger:
+            self.logger.log(level, message, *args, **kwargs)
 
     def render(self):
         return {
@@ -17,11 +28,14 @@ def format_temp(label: str, data: dict):
 
 class TempOrb(Orb):
 
-    def __init__(self, temp: dict):
+    def __init__(self, temp: dict, logger=None):
         self.temp = temp
+        super().__init__(logger)
 
     def render(self):
         temps = [format_temp(k, v) for k, v in self.temp.items() if v["actual"] is not None]
+
+        self.log(logging.DEBUG, f"Temps: {temps}")
 
         row = {
             "type": "text",
@@ -40,16 +54,16 @@ class TempOrb(Orb):
             row["y"] += 30
             rows.append(row.copy())
 
-
         return {
             "fullDraw": True,
             "data": rows
         }
 
 class ImageOrb(Orb):
-    
-    def __init__(self, url: str):
+
+    def __init__(self, url: str, logger=None):
         self.url = url
+        super().__init__(logger)
 
     def render(self):
         return {
@@ -67,9 +81,10 @@ class ImageOrb(Orb):
         }
 
 class StatusOrb(Orb):
-    
-    def __init__(self, filename: str):
+
+    def __init__(self, filename: str, logger=None):
         self.filename = filename
+        super().__init__(logger)
 
     def render(self):
         return {
@@ -91,8 +106,9 @@ class StatusOrb(Orb):
 
 class ProgressOrb(Orb):
 
-    def __init__(self, status: dict):
+    def __init__(self, status: dict, logger=None):
         self.status = status
+        super().__init__(logger)
 
     def render(self):
         remaining = self.status["progress"]["printTimeLeft"]
@@ -100,6 +116,10 @@ class ProgressOrb(Orb):
         progress = self.status["progress"]["completion"]
         origin = self.status["progress"]["printTimeLeftOrigin"]
 
+        self.log(
+            logging.DEBUG,
+            f"Progress: {progress}, Remaining: {remaining}, Elapsed: {elapsed}",
+        )
         remaining_str = "--:--"
         elapsed_str = "--:--"
         if remaining is not None: 
@@ -109,6 +129,7 @@ class ProgressOrb(Orb):
 
         if origin == "genius":
             progress = elapsed / (remaining + elapsed) * 100
+            self.log(logging.DEBUG, f"Calculated progress from PTG: {progress}")
 
         progress_arcs = []
         if progress:
