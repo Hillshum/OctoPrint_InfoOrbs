@@ -209,3 +209,29 @@ class ProgressOrb(Orb):
                 },
             ]
         }
+
+
+class StateOrb(Orb):
+
+    def __init__(self, state, logger=None):
+        self.state = state
+        super().__init__(logger)
+
+    def render(self):
+        self.log(logging.DEBUG, f"Rendering state orb with state: {self.state}")
+        return {
+            "fullDraw": True,
+            "data": [
+                {
+                    "type": "text",
+                    "background": "black",
+                    "text": self.state["text"],
+                    "color": "white",
+                    "align": "center",
+                    "font": 6,
+                    "size": 10,
+                    "x": 110,
+                    "y": 100,
+                }
+            ],
+        }

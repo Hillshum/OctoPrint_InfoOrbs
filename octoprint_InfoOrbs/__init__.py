@@ -18,14 +18,16 @@ import octoprint.plugin
 
 from . import orbs
 
+
 @dataclass
 class Display:
     label: str
-    data: Union[str,int,float]
+    data: Union[str, int, float]
     labelColor: str
     color: str
     background: str
     alignment: str
+
 
 class InfoOrbsResponse:
 
@@ -33,14 +35,15 @@ class InfoOrbsResponse:
         self.interval = interval
         self.displays = displays
 
-
     def build_json(self):
         return {
             "interval": self.interval,
-            "displays": [d.render() for d in self.displays]
+            "displays": [d.render() for d in self.displays],
         }
 
-class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
+
+class InfoorbsPlugin(
+    octoprint.plugin.SettingsPlugin,
     octoprint.plugin.AssetPlugin,
     octoprint.plugin.BlueprintPlugin,
     octoprint.plugin.TemplatePlugin,
@@ -61,7 +64,7 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
         return {
             "js": ["js/InfoOrbs.js"],
             "css": ["css/InfoOrbs.css"],
-            "less": ["less/InfoOrbs.less"]
+            "less": ["less/InfoOrbs.less"],
         }
 
     def is_blueprint_csrf_protected(self):
@@ -82,17 +85,17 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
         # crop image to square
         if height > width:
             offset = (height - width) // 2
-            img = img[offset:offset + width, 0:width]
+            img = img[offset : offset + width, 0:width]
         else:
             offset = (width - height) // 2
-            img = img[0:height, offset:offset + height]
+            img = img[0:height, offset : offset + height]
 
         # scale image to 240x240
         img = cv2.resize(img, (240, 240), interpolation=cv2.INTER_AREA)
 
         # return jpg image
-        jpg = cv2.imencode('.jpg', img)[1].tobytes()
-        return flask.Response(jpg, mimetype='image/jpeg')
+        jpg = cv2.imencode(".jpg", img)[1].tobytes()
+        return flask.Response(jpg, mimetype="image/jpeg")
 
     @octoprint.plugin.BlueprintPlugin.route("/widget.json", methods=["GET"])
     def on_api_get(self):
@@ -108,6 +111,7 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
         progressOrb = orbs.ProgressOrb(current_status, self._logger)
 
         statusOrb = orbs.StatusOrb(selected_file, self._logger)
+        stateOrb = orbs.StateOrb(current_status["state"], self._logger)
 
         snapshotUrl = flask.url_for("plugin.InfoOrbs.prepare_image")
         snapshotOrb = orbs.ImageOrb(self._settings.get(["url_base"]) + snapshotUrl)
@@ -119,7 +123,7 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
             progressOrb,
             snapshotOrb,
             statusOrb,
-            orbs.Orb(self._logger),
+            stateOrb,
         ]
 
         d = resp.build_json()
@@ -143,13 +147,11 @@ class InfoorbsPlugin(octoprint.plugin.SettingsPlugin,
             "InfoOrbs": {
                 "displayName": "Infoorbs Plugin",
                 "displayVersion": self._plugin_version,
-
                 # version check: github repository
                 "type": "github_release",
                 "user": "hillshum",
                 "repo": "OctoPrint-InfoOrbs",
                 "current": self._plugin_version,
-
                 # update method: pip
                 "pip": "https://github.com/hillshum/OctoPrint-InfoOrbs/archive/{target_version}.zip",
             }
@@ -166,6 +168,7 @@ __plugin_name__ = "InfoOrbs"
 # OctoPrint 1.4.0 - 1.7.x run under both Python 3 and the end-of-life Python 2.
 # OctoPrint 1.8.0 onwards only supports Python 3.
 __plugin_pythoncompat__ = ">=3,<4"  # Only Python 3
+
 
 def __plugin_load__():
     global __plugin_implementation__
