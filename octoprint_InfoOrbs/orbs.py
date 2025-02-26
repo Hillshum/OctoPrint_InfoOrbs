@@ -24,7 +24,7 @@ def format_temp_label(label: str):
     return label
 
 def format_temp(label: str, data: dict):
-    return f"{format_temp_label(label)}: {data['actual']}C/{data['target']}C"
+    return f"{format_temp_label(label)}: {data['actual']}/{data['target']}C"
 
 class TempOrb(Orb):
 
@@ -33,7 +33,11 @@ class TempOrb(Orb):
         super().__init__(logger)
 
     def render(self):
-        temps = [format_temp(k, v) for k, v in self.temp.items() if v["actual"] is not None]
+        temps = [
+            format_temp(k, v)
+            for k, v in self.temp.items()
+            if v["actual"] is not None and k != "W"
+        ]
 
         self.log(logging.DEBUG, f"Temps: {temps}")
 
@@ -41,17 +45,17 @@ class TempOrb(Orb):
             "type": "text",
             "font": 1,
             "size": 30,
-            "align": "center",
+            "align": "lc",
             "color": "white",
             "background": "black",
-            "y": 100,
+            "y": 60,
             "x": 110,
         }
 
         rows = []
         for temp in temps:
             row["text"] = temp
-            row["y"] += 30
+            row["y"] += 35
             rows.append(row.copy())
 
         return {
