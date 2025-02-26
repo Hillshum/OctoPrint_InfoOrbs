@@ -213,25 +213,62 @@ class ProgressOrb(Orb):
 
 class StateOrb(Orb):
 
-    def __init__(self, state, logger=None):
+    def __init__(self, state: dict, resends: dict, logger=None):
         self.state = state
+        self.resends = resends
         super().__init__(logger)
 
     def render(self):
         self.log(logging.DEBUG, f"Rendering state orb with state: {self.state}")
+
+        resends_str = f"{self.resends['count']}/{self.resends['transmitted']} ({self.resends['ratio'] / 100.0}%)"
+        self.log(logging.DEBUG, f"Resends: {resends_str}")
         return {
             "fullDraw": True,
             "data": [
                 {
                     "type": "text",
                     "background": "black",
+                    "text": "Resends:",
+                    "color": "white",
+                    "align": "center",
+                    "font": 1,
+                    "size": 15,
+                    "x": 120,
+                    "y": 180,
+                },
+                {
+                    "type": "text",
+                    "background": "black",
+                    "text": resends_str,
+                    "color": "white",
+                    "align": "center",
+                    "font": 1,
+                    "size": 20,
+                    "x": 120,
+                    "y": 200,
+                },
+                {
+                    "type": "text",
+                    "background": "black",
+                    "text": "Current State:",
+                    "color": "white",
+                    "align": "center",
+                    "font": 1,
+                    "size": 15,
+                    "x": 120,
+                    "y": 50,
+                },
+                {
+                    "type": "text",
+                    "background": "black",
                     "text": self.state["text"],
                     "color": "white",
                     "align": "center",
-                    "font": 6,
-                    "size": 10,
-                    "x": 110,
-                    "y": 100,
-                }
+                    "font": 1,
+                    "size": 30,
+                    "x": 120,
+                    "y": 80,
+                },
             ],
         }

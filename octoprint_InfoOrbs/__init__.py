@@ -111,7 +111,9 @@ class InfoorbsPlugin(
         progressOrb = orbs.ProgressOrb(current_status, self._logger)
 
         statusOrb = orbs.StatusOrb(selected_file, self._logger)
-        stateOrb = orbs.StateOrb(current_status["state"], self._logger)
+        stateOrb = orbs.StateOrb(
+            current_status["state"], current_status["resends"], self._logger
+        )
 
         snapshotUrl = flask.url_for("plugin.InfoOrbs.prepare_image")
         snapshotOrb = orbs.ImageOrb(self._settings.get(["url_base"]) + snapshotUrl)
