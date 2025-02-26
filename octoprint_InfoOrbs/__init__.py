@@ -47,6 +47,7 @@ class InfoorbsPlugin(
     octoprint.plugin.AssetPlugin,
     octoprint.plugin.BlueprintPlugin,
     octoprint.plugin.TemplatePlugin,
+    octoprint.plugin.WebcamProviderPlugin,
 ):
 
     ##~~ SettingsPlugin mixin
@@ -74,7 +75,8 @@ class InfoorbsPlugin(
     @octoprint.plugin.BlueprintPlugin.route("/snapshot", methods=["GET"])
     def prepare_image(self):
         # download image
-        snapshotUrl = octoprint.settings.settings().get(["webcam", "snapshot"])
+
+        snapshotUrl = octoprint.webcams.get_default_webcam().config.snapshotDisplay
         req = requests.get(snapshotUrl)
         b = io.BytesIO(req.content)
         img = cv2.imdecode(np.frombuffer(b.getbuffer(), np.uint8), -1)
