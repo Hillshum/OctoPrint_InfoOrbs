@@ -87,18 +87,18 @@ class InfoorbsPlugin(
         # get image size
         height, width = img.shape[:2]
 
-        corners = ((2, 3), (900, 300))
+        # crop image to square
+        if height > width:
+            offset = (height - width) // 2
+            corners = ((0, offset), (width, height - offset))
+        else:
+            offset = (width - height) // 2
+            corners = ((offset, 0), (width - offset, height))
+
+        corners = ((2, 3), (900, 5))
 
         # crop image at the corners
-        img = img[corners[0][0] : corners[1][0], corners[0][1] : corners[1][1]]
-
-        # crop image to square
-        # if height > width:
-        #     offset = (height - width) // 2
-        #     img = img[offset : offset + width, 0:width]
-        # else:
-        #     offset = (width - height) // 2
-        #     img = img[0:height, offset : offset + height]
+        img = img[corners[0][1] : corners[1][1], corners[0][0] : corners[1][0]]
 
         # scale image to 240x240
         img = cv2.resize(img, (240, 240), interpolation=cv2.INTER_AREA)
