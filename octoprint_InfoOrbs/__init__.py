@@ -113,7 +113,9 @@ class InfoorbsPlugin(
         # get image size
         height, width = img.shape[:2]
 
-        corner_values = self._get_image_crop_corners((width, height))
+        query = flask.request.args
+
+        corner_values = self._get_image_crop_corners((width, height), query)
 
         # crop image at the corners
         img = img[
@@ -167,7 +169,7 @@ class InfoorbsPlugin(
 
     def get_template_configs(self):
         return [
-            dict(type="settings", custom_bindings=False),
+            dict(type="settings", custom_bindings=True),
         ]
 
     ##~~ Softwareupdate hook
@@ -190,12 +192,27 @@ class InfoorbsPlugin(
             }
         }
 
-    def _get_image_crop_corners(self, dimensions: tuple[int, int]) -> dict[str, int]:
+    def _get_image_crop_corners(
+        self, dimensions: tuple[int, int], query
+    ) -> dict[str, int]:
+
+        corner_values = {}
+
         # crop image to square
-        if self._settings.get(["custom_crop"]):
-            corner_values = {}
+        # if self._settings.get(["custom_crop"]):
+
+        # apply the default settings
+        for corner in CORNER_KEYS:
+            corner_values[corner] = self._settings.get([corner], merged=True)
+
+        query_has_all = all(k in query for k in CORNER_KEYS)
+        # values passed on the query string override defaults
+        if query_has_all:
             for corner in CORNER_KEYS:
-                corner_values[corner] = self._settings.get([corner], merged=True)
+                if corner in query:
+                    corner_values[corner] = int(query.get(corner))
+
+        if query_has_all or self._settings.get(["custom_crop"]):
             return corner_values
 
         width, height = dimensions

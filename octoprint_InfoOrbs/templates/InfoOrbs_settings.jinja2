@@ -3,7 +3,8 @@
     <div class="control-group">
         <label class="control-label" for="url_base">{{_('URL Base') }}</label>
         <div class='controls'>
-            <input type="text" class="form-control" id="url_base" name="url_base" data-bind="value: settings.plugins.InfoOrbs.url_base">
+            <input type="text" class="form-control" id="url_base" name="url_base"
+                data-bind="value: settingsViewModel.settings.plugins.InfoOrbs.url_base">
         </div>
     </div>
 </form>
@@ -12,38 +13,47 @@
         <label class="control-label">{{_('Custom Crop') }}</label>
         <div class="controls">
             <label class="radio inline">
-                <input type="radio" name="custom_crop" value="enable" data-bind="checked: settings.plugins.InfoOrbs.custom_crop"> {{_('Enable')}}
+                <input type="radio" name="custom_crop" value="enable"
+                    data-bind="checkedValue: true, checked: settingsViewModel.settings.plugins.InfoOrbs.custom_crop"> {{_('Enable')}}
             </label>
             <label class="radio inline">
-                <input type="radio" name="custom_crop" value="disable" data-bind="checked: settings.plugins.InfoOrbs.custom_crop"> {{_('Disable')}}
+                <input type="radio" name="custom_crop" value="disable"
+                    data-bind="checkedValue: false, checked: settingsViewModel.settings.plugins.InfoOrbs.custom_crop"> {{_('Disable')}}
             </label>
         </div>
     </div>
 </form>
-<form class="form-horizontal" data-bind="visible: settings.plugins.InfoOrbs.custom_crop() == 'enable'">
+<form class="form-horizontal" data-bind="visible: settingsViewModel.settings.plugins.InfoOrbs.custom_crop()">
     <div class="control-group">
-        <label class="control-label" for="top-left-x">{{_('Top Left Corner X') }}</label>
+        <label class="control-label" for="top-left-x">{{_('Left') }}</label>
         <div class="controls">
-        <input name="top-left-x" class="form-control" type="number" data-bind="value: settings.plugins.InfoOrbs.top_left_x">
+        <input name="top-left-x" class="form-control" type="number"
+            data-bind="value: settingsViewModel.settings.plugins.InfoOrbs.top_left_x">
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="top-left-y">{{_('Top Left Corner Y') }}</label>
+        <label class="control-label" for="top-left-y">{{_('Top') }}</label>
         <div class="controls">
-        <input name="top-left-y" class="form-control" type="number" data-bind="value: settings.plugins.InfoOrbs.top_left_y">
+        <input name="top-left-y" class="form-control" type="number"
+            data-bind="value: settingsViewModel.settings.plugins.InfoOrbs.top_left_y">
         </div>
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="bottom-right-x">{{_('Bottom Right Corner X') }}</label>
+        <label class="control-label" for="bottom-right-x">{{_('Right') }}</label>
         <div class="controls">
-        <input name="bottom-left-x" class="form-control" type="number" data-bind="value: settings.plugins.InfoOrbs.bottom_right_x">
+        <input name="bottom-left-x" class="form-control" type="number"
+            data-bind="value: settingsViewModel.settings.plugins.InfoOrbs.bottom_right_x">
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="bottom-right-y">{{_('Bottom Right Corner Y') }}</label>
+        <label class="control-label" for="bottom-right-y">{{_('Bottom') }}</label>
         <div class="controls">
-        <input name="bottom-right-y" class="form-control" type="number" data-bind="value: settings.plugins.InfoOrbs.bottom_right_y">
+        <input name="bottom-right-y" class="form-control" type="number"
+            data-bind="value: settingsViewModel.settings.plugins.InfoOrbs.bottom_right_y">
         </div>
     </div>
 </form>
+<div class="infoorbs-image-preview" data-bind="visible: settingsViewModel.settings.plugins.InfoOrbs.custom_crop()">
+    <img data-bind="attr: { src:  previewUrl}" alt="Preview">
+</div>
