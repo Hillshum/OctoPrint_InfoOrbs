@@ -28,6 +28,13 @@ class Display:
     background: str
     alignment: str
 
+CORNER_KEYS = [
+    "top_left_x",
+    "top_left_y",
+    "bottom_right_x",
+    "bottom_right_y",
+]
+
 
 class InfoOrbsResponse:
 
@@ -55,7 +62,26 @@ class InfoorbsPlugin(
     def get_settings_defaults(self):
         return {
             "url_base": "http://octopi.local",
+            "custom_crop": False,
+            "top_left_x": 2,
+            "top_left_y": 3,
+            "bottom_right_x": 300,
+            "bottom_right_y": 5,
         }
+
+    def on_settings_save(self, data):
+        if "url_base" in data:
+            self._settings.set(["url_base"], data["url_base"])
+
+        if "custom_crop" in data:
+            self._settings.set(["custom_crop"], data["custom_crop"])
+
+        for corner in CORNER_KEYS:
+            if corner in data:
+                try:
+                    self._settings.set([corner], int(data[corner]))
+                except ValueError:
+                    self._logger.error(f"Invalid value for {corner}")
 
     ##~~ AssetPlugin mixin
 
@@ -87,18 +113,13 @@ class InfoorbsPlugin(
         # get image size
         height, width = img.shape[:2]
 
-        # crop image to square
-        if height > width:
-            offset = (height - width) // 2
-            corners = ((0, offset), (width, height - offset))
-        else:
-            offset = (width - height) // 2
-            corners = ((offset, 0), (width - offset, height))
-
-        corners = ((2, 3), (900, 5))
+        corner_values = self._get_image_crop_corners((width, height))
 
         # crop image at the corners
-        img = img[corners[0][1] : corners[1][1], corners[0][0] : corners[1][0]]
+        img = img[
+            corner_values["top_left_y"] : corner_values["bottom_right_y"],
+            corner_values["top_left_x"] : corner_values["bottom_right_x"],
+        ]
 
         # scale image to 240x240
         img = cv2.resize(img, (240, 240), interpolation=cv2.INTER_AREA)
@@ -168,6 +189,37 @@ class InfoorbsPlugin(
                 "pip": "https://github.com/hillshum/OctoPrint-InfoOrbs/archive/{target_version}.zip",
             }
         }
+
+    def _get_image_crop_corners(self, dimensions: tuple[int, int]) -> dict[str, int]:
+        # crop image to square
+        if self._settings.get(["custom_crop"]):
+            corner_values = {}
+            for corner in CORNER_KEYS:
+                corner_values[corner] = self._settings.get([corner], merged=True)
+            return corner_values
+
+        width, height = dimensions
+
+        if height > width:
+            offset = (height - width) // 2
+            # corners = ((0, offset), (width, height - offset))
+            corner_values = {
+                "top_left_x": 0,
+                "top_left_y": offset,
+                "bottom_right_x": width,
+                "bottom_righty": height - offset,
+            }
+        else:
+            offset = (width - height) // 2
+            # corners = ((offset, 0), (width - offset, height))
+            corner_values = {
+                "top_left_x": offset,
+                "top_left_y": 0,
+                "bottom_right_x": width - offset,
+                "bottom_right_y": height,
+            }
+
+        return corner_values
 
 
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
