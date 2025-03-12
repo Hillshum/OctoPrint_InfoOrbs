@@ -24,7 +24,7 @@ def format_temp_label(label: str):
     return label
 
 def format_temp(label: str, data: dict):
-    return f"{format_temp_label(label)}: {data['actual']}/{data['target']}C"
+    return f"{format_temp_label(label)}: {data['actual']:.1f}/{data['target']:.0f}C"
 
 class TempOrb(Orb):
 
